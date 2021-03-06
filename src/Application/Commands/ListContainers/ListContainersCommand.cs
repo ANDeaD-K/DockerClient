@@ -4,7 +4,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Andead.DockerClient.Application.TodoItems.Commands.ListContainersCommand
+namespace Andead.DockerClient.Application.Commands.ListContainers
 {
     public class ListContainersCommand : IRequest<ListContainersResponseDto[]>
     {

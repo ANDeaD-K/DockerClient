@@ -3,7 +3,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Andead.DockerClient.Application.TodoItems.Commands.StartContainerCommand
+namespace Andead.DockerClient.Application.Commands.StartContainer
 {
     public class StartContainerCommand : IRequest
     {

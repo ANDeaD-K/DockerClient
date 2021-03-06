@@ -1,7 +1,7 @@
 ﻿using Andead.DockerClient.Application.Common.Mappings;
 using Andead.DockerClient.Domain.Entities.Docker.Responses;
 
-namespace Andead.DockerClient.Application.TodoItems.Queries.GetSystemInformationQuery
+namespace Andead.DockerClient.Application.Queries.GetSystemInformation
 {
     public class SystemInformationDto : IMapFrom<SystemInformationResponse>
     {

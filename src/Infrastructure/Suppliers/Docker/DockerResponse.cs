@@ -82,14 +82,18 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
             switch (StatusCode)
             {
                 case HttpStatusCode.OK:
+                case HttpStatusCode.Created:
+                case HttpStatusCode.NoContent:
+                case HttpStatusCode.NotModified:
                     var reply = await DeserializeContent<T>();
-                    if (reply == null)
+                    if (reply == null && typeof(T) != typeof(EmptyResponse))
                     {
                         throw new Exception("Response was null which was not expected.");
                     }
                     return reply;
                 case HttpStatusCode.BadRequest:
                 case HttpStatusCode.NotFound:
+                case HttpStatusCode.Conflict:
                 case HttpStatusCode.InternalServerError:
                     var error = await DeserializeContent<ErrorResponse>();
                     if (error == null)

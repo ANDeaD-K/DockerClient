@@ -18,6 +18,8 @@ export interface IDockerClient {
     getInfo(): Observable<SystemInformationDto>;
     startContainer(command: StartContainerCommand): Observable<void>;
     getListContainers(all: boolean | undefined, limit: number | undefined, size: boolean | undefined, filters: string | null | undefined): Observable<ListContainersResponseDto[]>;
+    createContainer(command: CreateContainerCommand): Observable<CreateContainerResponseDto>;
+    createImage(command: CreateImageCommand): Observable<void>;
 }
 
 @Injectable({
@@ -193,6 +195,106 @@ export class DockerClient implements IDockerClient {
             }));
         }
         return _observableOf<ListContainersResponseDto[]>(<any>null);
+    }
+
+    createContainer(command: CreateContainerCommand): Observable<CreateContainerResponseDto> {
+        let url_ = this.baseUrl + "/api/Docker/containers/create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateContainer(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateContainer(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateContainerResponseDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateContainerResponseDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateContainer(response: HttpResponseBase): Observable<CreateContainerResponseDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CreateContainerResponseDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateContainerResponseDto>(<any>null);
+    }
+
+    createImage(command: CreateImageCommand): Observable<void> {
+        let url_ = this.baseUrl + "/api/Docker/images/create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateImage(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateImage(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -1023,6 +1125,130 @@ export interface IListContainersResponseDto {
     created?: string | undefined;
     state?: string | undefined;
     status?: string | undefined;
+}
+
+export class CreateContainerResponseDto implements ICreateContainerResponseDto {
+    id?: string | undefined;
+    warnings?: string[] | undefined;
+
+    constructor(data?: ICreateContainerResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            if (Array.isArray(_data["warnings"])) {
+                this.warnings = [] as any;
+                for (let item of _data["warnings"])
+                    this.warnings!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateContainerResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContainerResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (Array.isArray(this.warnings)) {
+            data["warnings"] = [];
+            for (let item of this.warnings)
+                data["warnings"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ICreateContainerResponseDto {
+    id?: string | undefined;
+    warnings?: string[] | undefined;
+}
+
+export class CreateContainerCommand implements ICreateContainerCommand {
+    name?: string | undefined;
+    image?: string | undefined;
+
+    constructor(data?: ICreateContainerCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.image = _data["image"];
+        }
+    }
+
+    static fromJS(data: any): CreateContainerCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContainerCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface ICreateContainerCommand {
+    name?: string | undefined;
+    image?: string | undefined;
+}
+
+export class CreateImageCommand implements ICreateImageCommand {
+    fromImage?: string | undefined;
+
+    constructor(data?: ICreateImageCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fromImage = _data["fromImage"];
+        }
+    }
+
+    static fromJS(data: any): CreateImageCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateImageCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fromImage"] = this.fromImage;
+        return data; 
+    }
+}
+
+export interface ICreateImageCommand {
+    fromImage?: string | undefined;
 }
 
 export class PaginatedListOfTodoItemDto implements IPaginatedListOfTodoItemDto {

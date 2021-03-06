@@ -1,11 +1,10 @@
 ﻿using Andead.DockerClient.Application.Common.Interfaces;
-using Andead.DockerClient.Application.TodoItems.Queries.GetSystemInformationQuery;
 using AutoMapper;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Andead.DockerClient.Application.TodoItems.Queries.GetSystemInformationCommand
+namespace Andead.DockerClient.Application.Queries.GetSystemInformation
 {
     public class GetSystemInformationQuery : IRequest<SystemInformationDto>
     {

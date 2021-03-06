@@ -1,6 +1,8 @@
-﻿using Andead.DockerClient.Application.Common.Interfaces;
-using Andead.DockerClient.Application.TodoItems.Commands.ListContainersCommand;
-using Andead.DockerClient.Application.TodoItems.Commands.StartContainerCommand;
+﻿using Andead.DockerClient.Application.Commands.CreateContainer;
+using Andead.DockerClient.Application.Commands.CreateImage;
+using Andead.DockerClient.Application.Commands.ListContainers;
+using Andead.DockerClient.Application.Commands.StartContainer;
+using Andead.DockerClient.Application.Common.Interfaces;
 using Andead.DockerClient.Domain.Entities.Docker.Requests;
 using Andead.DockerClient.Domain.Entities.Docker.Responses;
 using System.Threading.Tasks;
@@ -29,6 +31,7 @@ namespace Andead.DockerClient.Infrastructure.Services
                 Id = command.Id,
                 DetachKeys = command.DetachKeys
             });
+
             await response.GetContentOrThrow<EmptyResponse>();
         }
 
@@ -43,6 +46,27 @@ namespace Andead.DockerClient.Infrastructure.Services
             });
 
             return await response.GetContentOrThrow<ListContainersResponse[]>();
+        }
+
+        public async Task<CreateContainerResponse> CreateContainer(CreateContainerCommand command)
+        {
+            var response = await _client.ExecuteAsync(new CreateContainerRequest
+            {
+                Name = command.Name,
+                Image = command.Image
+            });
+
+            return await response.GetContentOrThrow<CreateContainerResponse>();
+        }
+
+        public async Task CreateImage(CreateImageCommand command)
+        {
+            var response = await _client.ExecuteAsync(new CreateImageRequest
+            {
+                FromImage = command.FromImage
+            });
+
+            await response.GetContentOrThrow<EmptyResponse>();
         }
     }
 }

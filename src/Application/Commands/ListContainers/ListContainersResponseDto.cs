@@ -1,7 +1,7 @@
 ﻿using Andead.DockerClient.Application.Common.Mappings;
 using Andead.DockerClient.Domain.Entities.Docker.Responses;
 
-namespace Andead.DockerClient.Application.TodoItems.Commands.ListContainersCommand
+namespace Andead.DockerClient.Application.Commands.ListContainers
 {
     public class ListContainersResponseDto : IMapFrom<ListContainersResponse>
     {

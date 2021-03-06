@@ -1,7 +1,8 @@
-﻿using Andead.DockerClient.Application.TodoItems.Commands.ListContainersCommand;
-using Andead.DockerClient.Application.TodoItems.Commands.StartContainerCommand;
-using Andead.DockerClient.Application.TodoItems.Queries.GetSystemInformationCommand;
-using Andead.DockerClient.Application.TodoItems.Queries.GetSystemInformationQuery;
+﻿using Andead.DockerClient.Application.Commands.CreateContainer;
+using Andead.DockerClient.Application.Commands.CreateImage;
+using Andead.DockerClient.Application.Commands.ListContainers;
+using Andead.DockerClient.Application.Commands.StartContainer;
+using Andead.DockerClient.Application.Queries.GetSystemInformation;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -25,6 +26,18 @@ namespace Andead.DockerClient.WebUI.Controllers
         public async Task<ActionResult<ListContainersResponseDto[]>> GetListContainers([FromQuery]ListContainersCommand command)
         {
             return await Mediator.Send(command);
+        }
+
+        [HttpPost("containers/create")]
+        public async Task<ActionResult<CreateContainerResponseDto>> CreateContainer(CreateContainerCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPost("images/create")]
+        public async Task CreateImage(CreateImageCommand command)
+        {
+            await Mediator.Send(command);
         }
     }
 }

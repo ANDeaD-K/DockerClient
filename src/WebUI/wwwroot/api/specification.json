@@ -110,6 +110,63 @@
         }
       }
     },
+    "/api/Docker/containers/create": {
+      "post": {
+        "tags": [
+          "Docker"
+        ],
+        "operationId": "Docker_CreateContainer",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContainerCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateContainerResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Docker/images/create": {
+      "post": {
+        "tags": [
+          "Docker"
+        ],
+        "operationId": "Docker_CreateImage",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateImageCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -647,6 +704,47 @@
             "nullable": true
           },
           "status": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateContainerResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "warnings": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CreateContainerCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateImageCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fromImage": {
             "type": "string",
             "nullable": true
           }
