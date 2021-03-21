@@ -937,6 +937,7 @@ export class SystemInformationDto implements ISystemInformationDto {
     containersRunning?: number;
     containersPaused?: number;
     containersStopped?: number;
+    images?: number;
     kernelVersion?: string | undefined;
     operatingSystem?: string | undefined;
     osVersion?: string | undefined;
@@ -960,6 +961,7 @@ export class SystemInformationDto implements ISystemInformationDto {
             this.containersRunning = _data["containersRunning"];
             this.containersPaused = _data["containersPaused"];
             this.containersStopped = _data["containersStopped"];
+            this.images = _data["images"];
             this.kernelVersion = _data["kernelVersion"];
             this.operatingSystem = _data["operatingSystem"];
             this.osVersion = _data["osVersion"];
@@ -987,6 +989,7 @@ export class SystemInformationDto implements ISystemInformationDto {
         data["containersRunning"] = this.containersRunning;
         data["containersPaused"] = this.containersPaused;
         data["containersStopped"] = this.containersStopped;
+        data["images"] = this.images;
         data["kernelVersion"] = this.kernelVersion;
         data["operatingSystem"] = this.operatingSystem;
         data["osVersion"] = this.osVersion;
@@ -1007,6 +1010,7 @@ export interface ISystemInformationDto {
     containersRunning?: number;
     containersPaused?: number;
     containersStopped?: number;
+    images?: number;
     kernelVersion?: string | undefined;
     operatingSystem?: string | undefined;
     osVersion?: string | undefined;
@@ -1178,6 +1182,7 @@ export interface ICreateContainerResponseDto {
 export class CreateContainerCommand implements ICreateContainerCommand {
     name?: string | undefined;
     image?: string | undefined;
+    openStdin?: boolean;
 
     constructor(data?: ICreateContainerCommand) {
         if (data) {
@@ -1192,6 +1197,7 @@ export class CreateContainerCommand implements ICreateContainerCommand {
         if (_data) {
             this.name = _data["name"];
             this.image = _data["image"];
+            this.openStdin = _data["openStdin"];
         }
     }
 
@@ -1206,6 +1212,7 @@ export class CreateContainerCommand implements ICreateContainerCommand {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["image"] = this.image;
+        data["openStdin"] = this.openStdin;
         return data; 
     }
 }
@@ -1213,6 +1220,7 @@ export class CreateContainerCommand implements ICreateContainerCommand {
 export interface ICreateContainerCommand {
     name?: string | undefined;
     image?: string | undefined;
+    openStdin?: boolean;
 }
 
 export class CreateImageCommand implements ICreateImageCommand {

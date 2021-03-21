@@ -53,7 +53,8 @@ namespace Andead.DockerClient.Infrastructure.Services
             var response = await _client.ExecuteAsync(new CreateContainerRequest
             {
                 Name = command.Name,
-                Image = command.Image
+                Image = command.Image,
+                OpenStdin = command.OpenStdin
             });
 
             return await response.GetContentOrThrow<CreateContainerResponse>();

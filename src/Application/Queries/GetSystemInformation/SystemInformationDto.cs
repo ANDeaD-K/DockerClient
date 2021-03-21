@@ -10,6 +10,7 @@ namespace Andead.DockerClient.Application.Queries.GetSystemInformation
         public int ContainersRunning { get; set; }
         public int ContainersPaused { get; set; }
         public int ContainersStopped { get; set; }
+        public int Images { get; set; }
         public string KernelVersion { get; set; }
         public string OperatingSystem { get; set; }
         public string OSVersion { get; set; }

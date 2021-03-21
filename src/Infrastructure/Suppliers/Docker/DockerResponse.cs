@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
@@ -61,14 +62,22 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
 
             try
             {
-                using (var responseStream = await _responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                using (var streamReader = new System.IO.StreamReader(responseStream))
-                using (var jsonTextReader = new JsonTextReader(streamReader))
+                using var responseStream = await _responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using var streamReader = new System.IO.StreamReader(responseStream);
+                using var jsonTextReader = new JsonTextReader(streamReader)
                 {
-                    var serializer = JsonSerializer.Create(_jsonSerializerSettings);
-                    var typedBody = serializer.Deserialize<T>(jsonTextReader);
-                    return typedBody;
+                    SupportMultipleContent = true
+                };
+
+                var serializer = JsonSerializer.Create(_jsonSerializerSettings);
+                T result = default;
+
+                while (jsonTextReader.Read())
+                {
+                    result = serializer.Deserialize<T>(jsonTextReader);
                 }
+
+                return result;
             }
             catch (JsonException)
             {

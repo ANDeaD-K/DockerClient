@@ -19,7 +19,7 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
         public DockerClient(HttpClient httpClient, IConfiguration configuration)
         {
             httpClient.BaseAddress = new Uri(configuration.GetDockerHost());
-
+            
             _httpClient = httpClient;
         }
 
@@ -56,12 +56,19 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
 
                 message.RequestUri = new Uri($"/v{API_VERSION}/{request.GetPath()}", UriKind.Relative);
 
-                var httpResponse = await _httpClient
-                    .SendAsync(message, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
-                    .ConfigureAwait(false);
+                try
+                {
+                    var httpResponse = await _httpClient
+                        .SendAsync(message, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+                        .ConfigureAwait(false);
 
-                var response = ResponseBuilder(httpResponse, _serializerSettings);
-                return response;
+                    var response = ResponseBuilder(httpResponse, _serializerSettings);
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"{ex.Message} ({ex.InnerException?.Message ?? "null"})");
+                }
             }
         }
     }
