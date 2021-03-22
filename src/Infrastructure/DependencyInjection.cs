@@ -1,5 +1,4 @@
 ﻿using Andead.DockerClient.Application.Common.Interfaces;
-using Andead.DockerClient.Infrastructure.Files;
 using Andead.DockerClient.Infrastructure.Handlers;
 using Andead.DockerClient.Infrastructure.Identity;
 using Andead.DockerClient.Infrastructure.Persistence;
@@ -43,7 +42,6 @@ namespace Andead.DockerClient.Infrastructure
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
             services.AddTransient<IDockerClient, DockerClientService>();
 
             services.AddHttpClient<Suppliers.Docker.DockerClient>()

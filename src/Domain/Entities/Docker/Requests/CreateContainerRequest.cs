@@ -21,11 +21,6 @@ namespace Andead.DockerClient.Domain.Entities.Docker.Requests
     {
     }
 
-    [DataContract]
-    public class ExposedPorts
-    {
-    }
-
     [DataContract]
     public class BlkioWeightDevice
     {
@@ -381,7 +376,7 @@ namespace Andead.DockerClient.Domain.Entities.Docker.Requests
         public string MacAddress { get; set; }
 
         [DataMember(Name = "ExposedPorts")]
-        public ExposedPorts ExposedPorts { get; set; }
+        public IDictionary<string, object> ExposedPorts { get; set; }
 
         [DataMember(Name = "StopSignal")]
         public string StopSignal { get; set; }

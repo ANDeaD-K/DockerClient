@@ -5,6 +5,7 @@ using Andead.DockerClient.Application.Commands.StartContainer;
 using Andead.DockerClient.Application.Common.Interfaces;
 using Andead.DockerClient.Domain.Entities.Docker.Requests;
 using Andead.DockerClient.Domain.Entities.Docker.Responses;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Andead.DockerClient.Infrastructure.Services
@@ -54,7 +55,8 @@ namespace Andead.DockerClient.Infrastructure.Services
             {
                 Name = command.Name,
                 Image = command.Image,
-                OpenStdin = command.OpenStdin
+                OpenStdin = command.OpenStdin,
+                ExposedPorts = command.ExposedPorts.ToDictionary(x => x, _ => new object())
             });
 
             return await response.GetContentOrThrow<CreateContainerResponse>();

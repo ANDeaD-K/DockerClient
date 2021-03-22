@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Andead.DockerClient.Application.Common.Mappings;
-using Andead.DockerClient.Application.TodoLists.Queries.GetTodos;
 using Andead.DockerClient.Domain.Entities;
 using NUnit.Framework;
 using System;
@@ -29,16 +28,6 @@ namespace Andead.DockerClient.Application.UnitTests.Common.Mappings
             _configuration.AssertConfigurationIsValid();
         }
         
-        [Test]
-        [TestCase(typeof(TodoList), typeof(TodoListDto))]
-        [TestCase(typeof(TodoItem), typeof(TodoItemDto))]
-        public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
-        {
-            var instance = GetInstanceOf(source);
-
-            _mapper.Map(instance, source, destination);
-        }
-
         private object GetInstanceOf(Type type)
         {
             if (type.GetConstructor(Type.EmptyTypes) != null)

@@ -11,6 +11,7 @@ namespace Andead.DockerClient.Application.Commands.CreateContainer
         public string Name { get; set; }
         public string Image { get; set; }
         public bool OpenStdin { get; set; }
+        public string[] ExposedPorts { get; set; }
     }
 
     public class CreateContainerCommandHandler : IRequestHandler<CreateContainerCommand, CreateContainerResponseDto>
