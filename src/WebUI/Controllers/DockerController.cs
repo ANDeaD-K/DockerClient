@@ -28,6 +28,12 @@ namespace Andead.DockerClient.WebUI.Controllers
             return await Mediator.Send(command);
         }
 
+        [HttpGet("images/get")]
+        public async Task<ActionResult<ListImagesResponseDto[]>> GetListImages([FromQuery] ListImagesCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
         [HttpPost("containers/create")]
         public async Task<ActionResult<CreateContainerResponseDto>> CreateContainer(CreateContainerCommand command)
         {

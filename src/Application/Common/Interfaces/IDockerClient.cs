@@ -18,5 +18,7 @@ namespace Andead.DockerClient.Application.Common.Interfaces
         Task<CreateContainerResponse> CreateContainer(CreateContainerCommand command);
 
         Task CreateImage(CreateImageCommand command);
+
+        Task<ListImagesResponse[]> GetListImages(ListImagesCommand command);
     }
 }

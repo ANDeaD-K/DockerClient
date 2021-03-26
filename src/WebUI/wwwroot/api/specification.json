@@ -110,6 +110,56 @@
         }
       }
     },
+    "/api/Docker/images/get": {
+      "get": {
+        "tags": [
+          "Docker"
+        ],
+        "operationId": "Docker_GetListImages",
+        "parameters": [
+          {
+            "name": "All",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "Filters",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "Digests",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListImagesResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Docker/containers/create": {
       "post": {
         "tags": [
@@ -279,6 +329,38 @@
           "status": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "ListImagesResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "repoTags": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "repoDigests": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "containers": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

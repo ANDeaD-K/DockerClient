@@ -18,6 +18,7 @@ export interface IDockerClient {
     getInfo(): Observable<SystemInformationDto>;
     startContainer(command: StartContainerCommand): Observable<void>;
     getListContainers(all: boolean | undefined, limit: number | undefined, size: boolean | undefined, filters: string | null | undefined): Observable<ListContainersResponseDto[]>;
+    getListImages(all: boolean | undefined, filters: string | null | undefined, digests: boolean | undefined): Observable<ListImagesResponseDto[]>;
     createContainer(command: CreateContainerCommand): Observable<CreateContainerResponseDto>;
     createImage(command: CreateImageCommand): Observable<void>;
 }
@@ -195,6 +196,68 @@ export class DockerClient implements IDockerClient {
             }));
         }
         return _observableOf<ListContainersResponseDto[]>(<any>null);
+    }
+
+    getListImages(all: boolean | undefined, filters: string | null | undefined, digests: boolean | undefined): Observable<ListImagesResponseDto[]> {
+        let url_ = this.baseUrl + "/api/Docker/images/get?";
+        if (all === null)
+            throw new Error("The parameter 'all' cannot be null.");
+        else if (all !== undefined)
+            url_ += "All=" + encodeURIComponent("" + all) + "&";
+        if (filters !== undefined && filters !== null)
+            url_ += "Filters=" + encodeURIComponent("" + filters) + "&";
+        if (digests === null)
+            throw new Error("The parameter 'digests' cannot be null.");
+        else if (digests !== undefined)
+            url_ += "Digests=" + encodeURIComponent("" + digests) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetListImages(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetListImages(<any>response_);
+                } catch (e) {
+                    return <Observable<ListImagesResponseDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ListImagesResponseDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetListImages(response: HttpResponseBase): Observable<ListImagesResponseDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ListImagesResponseDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ListImagesResponseDto[]>(<any>null);
     }
 
     createContainer(command: CreateContainerCommand): Observable<CreateContainerResponseDto> {
@@ -496,6 +559,74 @@ export interface IListContainersResponseDto {
     created?: string | undefined;
     state?: string | undefined;
     status?: string | undefined;
+}
+
+export class ListImagesResponseDto implements IListImagesResponseDto {
+    id?: string | undefined;
+    repoTags?: string[] | undefined;
+    repoDigests?: string[] | undefined;
+    size?: number;
+    containers?: number;
+
+    constructor(data?: IListImagesResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            if (Array.isArray(_data["repoTags"])) {
+                this.repoTags = [] as any;
+                for (let item of _data["repoTags"])
+                    this.repoTags!.push(item);
+            }
+            if (Array.isArray(_data["repoDigests"])) {
+                this.repoDigests = [] as any;
+                for (let item of _data["repoDigests"])
+                    this.repoDigests!.push(item);
+            }
+            this.size = _data["size"];
+            this.containers = _data["containers"];
+        }
+    }
+
+    static fromJS(data: any): ListImagesResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ListImagesResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (Array.isArray(this.repoTags)) {
+            data["repoTags"] = [];
+            for (let item of this.repoTags)
+                data["repoTags"].push(item);
+        }
+        if (Array.isArray(this.repoDigests)) {
+            data["repoDigests"] = [];
+            for (let item of this.repoDigests)
+                data["repoDigests"].push(item);
+        }
+        data["size"] = this.size;
+        data["containers"] = this.containers;
+        return data; 
+    }
+}
+
+export interface IListImagesResponseDto {
+    id?: string | undefined;
+    repoTags?: string[] | undefined;
+    repoDigests?: string[] | undefined;
+    size?: number;
+    containers?: number;
 }
 
 export class CreateContainerResponseDto implements ICreateContainerResponseDto {

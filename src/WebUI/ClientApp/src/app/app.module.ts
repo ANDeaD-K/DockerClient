@@ -14,6 +14,11 @@ import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { DxDrawerModule } from 'devextreme-angular/ui/drawer';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxTemplateModule } from 'devextreme-angular/core';
 
 @NgModule({
   declarations: [
@@ -33,7 +38,12 @@ import { ModalModule } from 'ngx-bootstrap/modal';
       { path: 'counter', component: CounterComponent }
     ]),
     BrowserAnimationsModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    DxDrawerModule,
+    DxToolbarModule,
+    DxListModule,
+    DxButtonModule,
+    DxTemplateModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },

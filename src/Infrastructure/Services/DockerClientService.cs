@@ -71,5 +71,17 @@ namespace Andead.DockerClient.Infrastructure.Services
 
             await response.GetContentOrThrow<EmptyResponse>();
         }
+
+        public async Task<ListImagesResponse[]> GetListImages(ListImagesCommand command)
+        {
+            var response = await _client.ExecuteAsync(new ListImagesRequest
+            {
+                All = command.All,
+                Filters = command.Filters,
+                Digests = command.Digests
+            });
+
+            return await response.GetContentOrThrow<ListImagesResponse[]>();
+        }
     }
 }
