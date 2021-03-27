@@ -34,9 +34,9 @@ import { DxTemplateModule } from 'devextreme-angular/core';
     FormsModule,
     ApiAuthorizationModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent }
-    ]),
+    { path: '', component: HomeComponent, pathMatch: 'full' },
+    { path: 'counter', component: CounterComponent }
+], { relativeLinkResolution: 'legacy' }),
     BrowserAnimationsModule,
     ModalModule.forRoot(),
     DxDrawerModule,
