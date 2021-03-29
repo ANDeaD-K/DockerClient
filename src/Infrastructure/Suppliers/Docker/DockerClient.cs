@@ -2,6 +2,7 @@
 using Andead.DockerClient.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,12 +16,14 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
         private const string API_VERSION = "1.41";
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings();
+        private readonly ILogger _logger;
 
-        public DockerClient(HttpClient httpClient, IConfiguration configuration)
+        public DockerClient(HttpClient httpClient, IConfiguration configuration, ILogger logger)
         {
             httpClient.BaseAddress = new Uri(configuration.GetDockerHost());
             
             _httpClient = httpClient;
+            _logger = logger;
         }
 
         private readonly Func<HttpResponseMessage, JsonSerializerSettings, DockerResponse> ResponseBuilder = (message, serializerSettings) => 
@@ -55,6 +58,8 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
                 message.Headers.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                 message.RequestUri = new Uri($"/v{API_VERSION}/{request.GetPath()}", UriKind.Relative);
+                _logger.Information("{RequestUri}", message.RequestUri.ToString());
+                _logger.Information("{Request}", requestText.ToIndentedJSONString());
 
                 try
                 {
@@ -63,6 +68,7 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
                         .ConfigureAwait(false);
 
                     var response = ResponseBuilder(httpResponse, _serializerSettings);
+                    _logger.Information("{Response}", await response.GetIndentedContentString());
                     return response;
                 }
                 catch (Exception ex)

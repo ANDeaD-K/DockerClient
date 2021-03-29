@@ -12,8 +12,10 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NSwag;
 using NSwag.Generation.Processors.Security;
+using Serilog;
 using System.Linq;
 
 namespace Andead.DockerClient.WebUI

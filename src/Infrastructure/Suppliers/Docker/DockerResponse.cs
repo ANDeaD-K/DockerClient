@@ -1,5 +1,6 @@
 ﻿using Andead.DockerClient.Domain.Entities.Docker.Responses;
 using Andead.DockerClient.Domain.Exceptions;
+using Andead.DockerClient.Infrastructure.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,17 @@ namespace Andead.DockerClient.Infrastructure.Suppliers.Docker
 
             var responseText = await _responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             return responseText;
+        }
+
+        public async Task<string> GetIndentedContentString()
+        {
+            if (_responseMessage?.Content == null)
+            {
+                return default;
+            }
+
+            var responseText = await _responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return responseText.ToIndentedJSONString();
         }
 
         protected async Task<T> DeserializeContent<T>()

@@ -1,3 +1,4 @@
+using Andead.DockerClient.Infrastructure.Extensions;
 using Andead.DockerClient.Infrastructure.Identity;
 using Andead.DockerClient.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Andead.DockerClient.WebUI
@@ -56,6 +60,22 @@ namespace Andead.DockerClient.WebUI
                 {
                     config.AddEnvironmentVariables(prefix: "DockerClient_");
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                })
+                .UseSerilog((context, configuration) =>
+                {
+                    configuration
+                        .Enrich.FromLogContext()
+                        .WriteTo.Console()
+                        .WriteTo.Elasticsearch(
+                            new ElasticsearchSinkOptions(new Uri(context.Configuration.GetElasticUrl()))
+                            {
+                                IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower()}-{DateTime.UtcNow:yyyy-MM}",
+                                AutoRegisterTemplate = true,
+                                ModifyConnectionSettings = x => 
+                                    x.BasicAuthentication(context.Configuration.GetElasticUsername(), context.Configuration.GetElasticPassword()),
+                            })
+                        .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
+                        .ReadFrom.Configuration(context.Configuration);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

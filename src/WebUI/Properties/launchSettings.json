@@ -12,9 +12,12 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "DockerClient_CertificatePassword": "12345",
         "DOTNET_ENVIRONMENT": "Development",
-        "DockerClient_DockerHost": "https://195.133.196.244:4243"
+        "DockerClient_DockerHost": "",
+        "DockerClient_ElasticUrl": "",
+        "DockerClient_CertificatePassword": "",
+        "DockerClient_ElasticUsername": "",
+        "DockerClient_ElasticPassword": ""
       }
     },
     "Andead.DockerClient.WebUI": {
